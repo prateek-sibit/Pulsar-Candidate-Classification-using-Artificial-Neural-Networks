@@ -71,8 +71,28 @@ classifier.fit(X_train,y_train,batch_size=10,epochs=100)
 # Making the predictions 
 y_predict = classifier.predict(X_test)
 
+# Now the sigmoid function returns probabilties 
+# We must map these probabilities into binary (0/1) values
+def prob_to_binary(value):
+    if(value>=0.5):
+        return 1
+    else:
+        return 0
+
+vector_f = np.vectorize(prob_to_binary)
+y_predict = vector_f(y_predict)
+
 # Results and Metrics
 from sklearn.metrics import confusion_matrix
 
+# Creating the confusion matrix for the model
 cm = confusion_matrix(y_test,y_predict)
+# Calculating the accuracy of the model using the confusion matrix = (TP+TN)/(TP+FP+TN+FN)
 accuracy = np.sum(np.diag(cm)/np.sum(cm))
+
+# Saving the Results and model
+classifier.save('Initial_ANN.h5')
+file = open('Initial_results.txt','w')
+results = 'Confusion Matrix : \n'+str(cm)+'\nAccuracy : '+str(accuracy)
+file.write(results)
+file.close()
