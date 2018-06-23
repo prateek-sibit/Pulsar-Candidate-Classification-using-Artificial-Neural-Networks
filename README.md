@@ -48,6 +48,18 @@ Each candidate is described by 8 continuous variables, and a single class variab
 8. Skewness of the DM-SNR curve. 
 9. Class 
 
+## Results 
+The Initial Model yields the following results
+```
+Confusion Matrix : 
+[[4883    1]
+ [ 413   73]]
+Accuracy : 0.9229050279329608
+
+Average Accuracy after Cross Validation : 0.9727022514088827
+```
+
+
 ## Citations :
 *R. J. Lyon, B. W. Stappers, S. Cooper, J. M. Brooke, J. D. Knowles, Fifty Years of Pulsar Candidate Selection: From simple filters to a new principled real-time classification approach, Monthly Notices of the Royal Astronomical Society 459 (1), 1104-1123, DOI: 10.1093/mnras/stw656*
 
