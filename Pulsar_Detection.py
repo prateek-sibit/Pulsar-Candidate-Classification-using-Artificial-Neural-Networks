@@ -96,3 +96,76 @@ file = open('Initial_results.txt','w')
 results = 'Confusion Matrix : \n'+str(cm)+'\nAccuracy : '+str(accuracy)
 file.write(results)
 file.close()
+
+# Evaluating, Improving and Tuning the ANN
+
+# Evaluating the Average accuracy of the current model using k-folds cross validation
+from sklearn.model_selection import cross_val_score
+from keras.wrappers.scikit_learn import KerasClassifier
+
+def build_classifier():
+    # Initializing the ANN
+    classifier = Sequential()
+    # Building the input layer
+    classifier.add(Dense(input_dim=8,units=5,activation='relu',kernel_initializer='uniform'))
+    # Adding a second layer
+    classifier.add(Dense(units=5,activation='relu',kernel_initializer='uniform'))
+    # Adding a third layer
+    classifier.add(Dense(units=5,activation='relu',kernel_initializer='uniform'))
+    # Creating the output layer
+    classifier.add(Dense(units=1,activation='sigmoid',kernel_initializer='uniform'))
+    # Compiling the ANN
+    classifier.compile(optimizer='adam',loss='binary_crossentropy',metrics=['accuracy'])
+    return classifier
+
+classifier = KerasClassifier(build_fn=build_classifier,batch_size=10,epochs=100)
+accuracies = cross_val_score(estimator=classifier,X=X_train,y=y_train,cv=10)
+average_accuracy = np.mean(accuracies)
+
+# Saving to the results file
+file = open('Initial_results.txt','a')
+average = '\nAccuracies for Cross validation : \n'+str(accuracies)+'\n\nAverage Accuracy : '+str(average_accuracy)
+file.write(average)
+file.close()
+
+# Improving the ANN using Grid Search and Dropout regularization
+from sklearn.model_selection import GridSearchCV
+from keras.wrappers.scikit_learn import KerasClassifier
+
+# Building the classifier function with added improvements
+def build_classifier(optimizer):
+    # Initializing the ANN
+    classifier = Sequential()
+    # Building the input layer
+    classifier.add(Dense(input_dim=8,units=5,activation='relu',kernel_initializer='uniform'))
+    classifier.add(Dropout(0.1))
+    # Adding a second layer
+    classifier.add(Dense(units=5,activation='relu',kernel_initializer='uniform'))
+    classifier.add(Dropout(0.1))
+    # Adding a third layer
+    classifier.add(Dense(units=5,activation='relu',kernel_initializer='uniform'))
+    classifier.add(Dropout(0.1))
+    # Adding a fourth layer
+    classifier.add(Dense(units=5,activation='relu',kernel_initializer='uniform'))
+    classifier.add(Dropout(0.1))
+    # Creating the output layer
+    classifier.add(Dense(units=1,activation='sigmoid',kernel_initializer='uniform'))
+    # Compiling the ANN
+    classifier.compile(optimizer=optimizer,loss='binary_crossentropy',metrics=['accuracy'])
+    return classifier
+    
+classifier = KerasClassifier(build_fn=build_classifier)
+# Create a dictionary of hyperparameters to tune
+parameters = {'batch_size' : [10,25],
+              'epochs' : [100,500],
+              'optimizer':['adam','rmsprop']}
+
+# Creating the grid search object
+grid_search = GridSearchCV(estimator=classifier,
+                           param_grid=parameters,
+                           scoring='accuracy',
+                           cv=10)
+grid_search.fit(X_train,y_train)
+
+best_parameters = grid_search.best_params_
+best_score = grid_search.best_score_
