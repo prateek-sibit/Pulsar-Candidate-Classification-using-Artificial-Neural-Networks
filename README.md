@@ -4,7 +4,7 @@
 
 - HTRU_2.csv : The Dataset file in csv (comma separated values) format
 
-- Initial_ANN.h5 : It is the initial model with the configuration and weights
+- Initial_ANN.h5 : It is the initial model with the configuration and weights.
   This file can be loaded directly to use as a model without going through the training using the commands
 ```
 from keras.models import load_model
